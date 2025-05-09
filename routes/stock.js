@@ -68,10 +68,14 @@ router.delete("/product/:id", async function (req, res, next) {
   const id = req.params.id;
 
   try {
-    const product = await productSchema.findByIdAndDelete(id);
+    const product = await productSchema.findById(id).populate("orders");
+
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
+    await orderSchema.deleteMany({ product: id });
+    await productSchema.findByIdAndDelete(id);
+
     res.status(200).json({ message: "Delete Successfully" });
   } catch (error) {
     res.send(error);

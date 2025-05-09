@@ -6,9 +6,9 @@ var bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 
 /* GET users listing. */
-router.get("/", function (req, res, next) {
-  res.send("respond with a resource");
-});
+// router.get("/", function (req, res, next) {
+//   res.send("respond with a resource");
+// });
 
 router.post("/register", async function (req, res, next) {
   try {
@@ -22,7 +22,9 @@ router.post("/register", async function (req, res, next) {
     await user.save();
     res.status(201).json({ message: "User created successfully", status: 201 });
   } catch (error) {
-    res.status(500).json({ message: "Error creating user", status: 500 });
+    res
+      .status(500)
+      .json({ message: "Error creating user", status: 500, error });
   }
 });
 
@@ -30,7 +32,8 @@ router.post("/login", async function (req, res, next) {
   try {
     const { name, password } = req.body;
 
-    const user = await userSchema.findOne();
+    const user = await userSchema.findOne({ name: name });
+    console.log(user);
 
     if (user.name !== name) {
       return res.status(404).json({ message: "User not found", status: 404 });

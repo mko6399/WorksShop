@@ -17,12 +17,10 @@ module.exports = async function (req, res, next) {
         return res.status(401).json({ message: "Unauthorized", error: err });
       }
 
-      if (!req.params) {
-        const user = await userSchema.findOne({ name: decoded.name });
+      const user = await userSchema.findOne({ name: decoded.name });
 
-        if (user.isApproved === false) {
-          return res.status(403).json({ message: "User not approved" });
-        }
+      if (user.isApproved === false) {
+        return res.status(403).json({ message: "User not approved" });
       }
 
       req.user = decoded;
