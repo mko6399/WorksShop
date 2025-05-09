@@ -43,7 +43,7 @@ router.post("/login", async function (req, res, next) {
     if (!isMatch) {
       return res
         .status(401)
-        .json({ message: "Password is incorrect", status: 404 });
+        .json({ message: "Password is incorrect", status: 401 });
     }
     const token = jwt.sign({ name: user.name }, process.env.JWT_SECRET, {
       expiresIn: "1d",
