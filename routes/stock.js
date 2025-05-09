@@ -87,7 +87,6 @@ router.get("/product/:id", async function (req, res, next) {
     let id = req.params.id;
 
     let product = await productSchema.findOne({ _id: id });
-    console.log(product);
 
     res.status(200).json({ message: `Get From Id = ${id}`, product });
   } catch (error) {
@@ -98,9 +97,11 @@ router.get("/product/:id", async function (req, res, next) {
 router.get("/:id/order", async function (req, res, next) {
   const id = req.params.id;
   try {
-    data = await productSchema.findById(id).populate("orders");
-
-    res.status(200).json({ message: "Find order in product", data });
+    let data = await productSchema.findById(id).populate("orders");
+    if (data === null || data === undefined) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+    res.status(200).json({ message: "Order in product", data });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error is" + error, status: 500 });
@@ -138,7 +139,8 @@ router.post("/:id/order", async function (req, res, next) {
     await data.save();
     pushDataPro.orders.push(data);
     await pushDataPro.save();
-    res.status(200).json({ message: "Seve order in product", data });
+
+    res.status(200).json({ message: "Save order in product", data });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error is" + error, status: 500 });
